@@ -135,6 +135,9 @@ char *trim(char * str);
 char * upcase(char * str);
 char * lowcase(char * str);
 
+bool starts_with(const std::string &str, const std::string &prefix);
+bool ends_with(const std::string &str, const std::string &suffix);
+
 bool ScanCMDBool(char * cmd,char const * const check);
 char * ScanCMDRemain(char * cmd);
 char * StripWord(char *&cmd);

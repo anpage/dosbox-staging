@@ -64,6 +64,21 @@ void lowcase(std::string &str) {
 	std::transform(str.begin(), str.end(), str.begin(), tf);
 }
 
+bool starts_with(const std::string &str, const std::string &prefix)
+{
+	if (prefix.length() > str.length())
+		return false;
+	return (str.compare(0, prefix.length(), prefix) == 0);
+}
+
+bool ends_with(const std::string &str, const std::string &suffix)
+{
+	if (suffix.length() > str.length())
+		return false;
+	const size_t pos = str.length() - suffix.length();
+	return (str.compare(pos, suffix.length(), suffix) == 0);
+}
+
 void trim(std::string &str) {
 	std::string::size_type loc = str.find_first_not_of(" \r\t\f\n");
 	if (loc != std::string::npos) str.erase(0,loc);
