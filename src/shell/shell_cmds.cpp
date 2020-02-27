@@ -570,6 +570,7 @@ void DOS_Shell::CMD_DIR(char * args) {
 	RealPt save_dta=dos.dta();
 	dos.dta(dos.tables.tempdta);
 	DOS_DTA dta(dos.dta());
+	fprintf(stderr, ":: %s\n", args);
 	bool ret=DOS_FindFirst(args,0xffff & ~DOS_ATTR_VOLUME);
 	if (!ret) {
 		if (!optB) WriteOut(MSG_Get("SHELL_CMD_FILE_NOT_FOUND"),args);
@@ -727,6 +728,51 @@ void DOS_Shell::CMD_DIR(char * args) {
 
 void DOS_Shell::CMD_LS(char *args)
 {
+	// why do we need this?
+	RealPt save_dta = dos.dta();
+	dos.dta(dos.tables.tempdta);
+	DOS_DTA dta(dos.dta());
+
+	bool ret = DOS_FindFirst("*.*", 0xffff & ~DOS_ATTR_VOLUME);
+	if (!ret) {
+		WriteOut("find first err\n");
+		dos.dta(save_dta);
+		return;
+	}
+
+	std::vector<DtaResult> results;
+
+	do {
+		DtaResult result;
+		dta.GetResult(result.name,
+		              result.size,
+		              result.date,
+		              result.time,
+		              result.attr);
+		results.push_back(result);
+	} while (ret = DOS_FindNext());
+
+	for (auto &entry : results) {
+		std::string name = entry.name;
+		const bool is_dir = entry.attr & DOS_ATTR_DIRECTORY;
+
+		if (name == "." || name == "..")
+			continue;
+
+		if (is_dir)
+			upcase(name);
+		else
+			lowcase(name);
+
+		if (is_dir) {
+			WriteOut("\033[34;1m%-16s\033[0m", name.c_str());
+			continue;
+		}
+
+		WriteOut("%-16s", name.c_str());
+	}
+	WriteOut("\n");
+	dos.dta(save_dta);
 }
 
 struct copysource {
