@@ -769,7 +769,14 @@ void DOS_Shell::CMD_LS(char *args)
 			continue;
 		}
 
-		WriteOut("%-16s", name.c_str());
+		const bool is_executable = ends_with(name, ".exe") ||
+		                           ends_with(name, ".bat") ||
+		                           ends_with(name, ".com");
+
+		if (is_executable)
+			WriteOut("\033[32;1m%-16s\033[0m", name.c_str());
+		else
+			WriteOut("%-16s", name.c_str());
 	}
 	WriteOut("\n");
 	dos.dta(save_dta);
