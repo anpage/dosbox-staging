@@ -69,6 +69,7 @@ static SHELL_Cmd cmd_list[] = {
 { "TIME",     0, &DOS_Shell::CMD_TIME,     "SHELL_CMD_TIME_HELP" },
 { "TYPE",     0, &DOS_Shell::CMD_TYPE,     "SHELL_CMD_TYPE_HELP" },
 { "VER",      0, &DOS_Shell::CMD_VER,      "SHELL_CMD_VER_HELP" },
+{ "LS",       0, &DOS_Shell::CMD_LS,       "SHELL_CMD_VER_HELP" }, // FIXME
 { 0, 0, 0, 0 }
 };
 
@@ -722,6 +723,10 @@ void DOS_Shell::CMD_DIR(char * args) {
 		show_press_any_key();
 	}
 	dos.dta(save_dta);
+}
+
+void DOS_Shell::CMD_LS(char *args)
+{
 }
 
 struct copysource {
