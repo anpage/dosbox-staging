@@ -230,8 +230,10 @@ AC_C_BIGENDIAN
 #Features to enable/disable
 AH_TEMPLATE(C_DEBUG,[Define to 1 to enable internal debugger, requires ncurses or pdcurses])
 AH_TEMPLATE(C_HEAVY_DEBUG,[Define to 1 to enable heavy debugging, requires C_DEBUG])
+AH_TEMPLATE(C_GDBSERVER,[Define to 1 to enable GNU debugger server])
 AC_ARG_ENABLE(debug, AC_HELP_STRING([--enable-debug], [Enable internal debugger]),,)
 AC_ARG_ENABLE(debug, AC_HELP_STRING([--enable-debug=heavy], [Enable internal debugger with heavy debugging]),,)
+AC_ARG_ENABLE(debug, AC_HELP_STRING([--enable-debug=gdbserver], [Enable GNU debugger server]),,)
 if test x$enable_debug = xyes -o x$enable_debug = xheavy; then
     AC_MSG_NOTICE([debugger was requested, finding curses library ...])
     PKG_CHECK_MODULES(NCURSES, ncurses, [
@@ -249,10 +251,13 @@ if test x$enable_debug = xyes -o x$enable_debug = xheavy; then
     if test x$enable_debug = xyes; then
         AC_DEFINE(C_DEBUG,1)
         AC_MSG_NOTICE([debugger enabled using the $curses library])
-    else
+    elif test x$enable_debug = xheavy; then
         AC_DEFINE(C_DEBUG,1)
         AC_DEFINE(C_HEAVY_DEBUG,1)
         AC_MSG_NOTICE([debugger with heavy debugging enabled using the $curses library])
+    else
+        AC_DEFINE(C_GDBSERVER,1)
+        AC_MSG_NOTICE([gdb server enabled])
     fi
 elif test empty$enable_debug != empty -a x$enable_debug != xno; then
     AC_MSG_ERROR(--enable-debug=$enable_debug was requested but the value "$enable_debug" is invalid)

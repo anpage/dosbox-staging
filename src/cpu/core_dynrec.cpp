@@ -107,7 +107,7 @@ enum BlockReturn {
 	BR_Cycles,
 	BR_Link1,BR_Link2,
 	BR_Opcode,
-#if (C_DEBUG)
+#if C_DEBUG || C_GDBSERVER
 	BR_OpcodeFull,
 #endif
 	BR_Iret,
@@ -185,8 +185,8 @@ Bits CPU_Core_Dynrec_Run(void) {
 	for (;;) {
 		// Determine the linear address of CS:EIP
 		PhysPt ip_point=SegPhys(cs)+reg_eip;
-		#if C_HEAVY_DEBUG
-			if (DEBUG_HeavyIsBreakpoint()) return debugCallback;
+		#if C_HEAVY_DEBUG || C_GDBSERVER
+			if (DEBUG_HeavyIsBreakpoint()) return DEBUG_debugCallback;
 		#endif
 
 		CodePageHandlerDynRec * chandler=0;
@@ -230,9 +230,9 @@ run_block:
 
 		switch (ret) {
 		case BR_Iret:
-#if C_DEBUG
-#if C_HEAVY_DEBUG
-			if (DEBUG_HeavyIsBreakpoint()) return debugCallback;
+#if C_DEBUG || C_GDBSERVER
+#if C_HEAVY_DEBUG || C_GDBSERVER
+			if (DEBUG_HeavyIsBreakpoint()) return DEBUG_debugCallback;
 #endif
 #endif
 			if (!GETFLAG(TF)) {
@@ -248,9 +248,9 @@ run_block:
 			// modifying instruction (like ret) or some nontrivial cpu state
 			// changing instruction (for example switch to/from pmode),
 			// or the maximum number of instructions to translate was reached
-#if C_DEBUG
-#if C_HEAVY_DEBUG
-			if (DEBUG_HeavyIsBreakpoint()) return debugCallback;
+#if C_DEBUG || C_GDBSERVER
+#if C_HEAVY_DEBUG || C_GDBSERVER
+			if (DEBUG_HeavyIsBreakpoint()) return DEBUG_debugCallback;
 #endif
 #endif
 			break;
@@ -258,9 +258,9 @@ run_block:
 		case BR_Cycles:
 			// cycles went negative, return from the core to handle
 			// external events, schedule the pic...
-#if C_DEBUG
-#if C_HEAVY_DEBUG
-			if (DEBUG_HeavyIsBreakpoint()) return debugCallback;
+#if C_DEBUG || C_GDBSERVER
+#if C_HEAVY_DEBUG || C_GDBSERVER
+			if (DEBUG_HeavyIsBreakpoint()) return DEBUG_debugCallback;
 #endif
 #endif
 			return CBRET_NONE;
@@ -282,7 +282,7 @@ run_block:
 			CPU_Cycles=1;
 			return CPU_Core_Normal_Run();
 
-#if (C_DEBUG)
+#if C_DEBUG || C_GDBSERVER
 		case BR_OpcodeFull:
 			CPU_CycleLeft+=CPU_Cycles;
 			CPU_Cycles=1;

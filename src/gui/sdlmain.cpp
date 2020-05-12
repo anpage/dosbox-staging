@@ -2278,7 +2278,7 @@ static void GUI_StartUp(Section * sec) {
 	MAPPER_AddHandler(KillSwitch,MK_f9,MMOD1,"shutdown","ShutDown");
 	MAPPER_AddHandler(SwitchFullScreen,MK_return,MMOD2,"fullscr","Fullscreen");
 	MAPPER_AddHandler(Restart,MK_home,MMOD1|MMOD2,"restart","Restart");
-#if C_DEBUG
+#if C_DEBUG || C_GDBSERVER
 	/* Pause binds with activate-debugger */
 #else
 	MAPPER_AddHandler(&PauseDOSBox, MK_pause, MMOD2, "pause", "Pause DBox");
@@ -2965,8 +2965,7 @@ static int LaunchEditor()
 	                "text editor.\n");
 	return 1;
 }
-
-#if C_DEBUG
+#if C_DEBUG || C_GDBSERVER
 extern void DEBUG_ShutDown(Section * /*sec*/);
 #endif
 
@@ -2982,7 +2981,7 @@ void restart_program(std::vector<std::string> & parameters) {
 	MIXER_CloseAudioDevice();
 	SDL_Delay(50);
 	QuitSDL();
-#if C_DEBUG
+#if C_DEBUG || C_GDBSERVER
 	// shutdown curses
 	DEBUG_ShutDown(NULL);
 #endif
